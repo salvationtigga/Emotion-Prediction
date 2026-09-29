@@ -16,9 +16,9 @@ import re
 
 
 
-model_path = r'C:\Salvation\python\Deep Learning\Sentiments project\BiGRU_Model.keras'
+model_path = 'BiGRU_Model.keras'
 
-tokenizer_path = r'C:\Salvation\python\Deep Learning\Sentiments project\tokenizer.pkl'
+tokenizer_path = 'tokenizer.pkl'
 
 max_sequence_length = 50
 emotion_labels = ['sadness', 'joy', 'love', 'anger', 'fear', 'surprise']

@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Start server and test endpoints
+        run: |
+          nohup uvicorn main:app --port 8000 > server.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf localhost:8000/health && break || sleep 2
+          done
+          curl -sf localhost:8000/health | grep -q '"model_loaded":true'
+          curl -sf -X POST localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"text": "I feel so happy and excited"}' | grep -q predicted_emotion
+
+      - name: Server logs
+        if: failure()
+        run: cat server.log
+        
